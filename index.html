@@ -79,24 +79,30 @@ canvas{display:block;border-radius:10px}
 
 <div class="pnl on" id="p-learn">
   <div class="card"><div class="cb"></div>
-    <div class="ct">Add one column at a time</div>
-    <div class="cs">Start from the right. Type the digit for the highlighted column. Remember to carry!</div>
-    <div style="display:flex;justify-content:center;margin-bottom:16px"><div id="sumT" style="display:grid;row-gap:0;align-items:center"></div></div>
-    <div style="background:rgba(0,0,0,.02);border-radius:14px;padding:14px 16px;border:1.5px solid rgba(0,0,0,.06);margin-bottom:12px;font-size:13px;font-weight:600;color:var(--ink);line-height:1.8" id="inst">Press New problem to start.</div>
+    <div class="ct">Column addition — one digit at a time</div>
+    <div class="cs">Type the digit for the highlighted column. Press Enter or Check. Work right to left.</div>
+    <div style="display:flex;justify-content:center;margin-bottom:16px">
+      <div id="sumT" style="display:inline-grid;gap:0;align-items:center"></div>
+    </div>
+    <div style="background:rgba(0,0,0,.02);border-radius:14px;padding:14px;border:1.5px solid rgba(0,0,0,.06);margin-bottom:12px;font-size:13px;font-weight:600;color:var(--ink);line-height:1.8;min-height:50px" id="inst">Press "New problem" to start.</div>
     <div class="fb" id="cf"></div>
-    <div id="doneB" style="display:none;background:#DCFCE7;border-radius:14px;padding:14px;text-align:center;font-family:Grandstander,cursive;font-size:20px;font-weight:900;color:var(--ok);margin-bottom:10px"></div>
-    <div class="row"><button class="btn btn-p" id="goB" onclick="ck6()" style="display:none">Check ✓</button><button class="btn btn-g" onclick="np6()">New problem ↻</button></div>
+    <div id="doneBox" style="display:none;background:#DCFCE7;border-radius:14px;padding:14px;text-align:center;font-family:Grandstander,cursive;font-size:22px;font-weight:900;color:var(--ok);margin-bottom:10px"></div>
+    <div class="row">
+      <button class="btn btn-p" id="goB" onclick="ck6()" style="display:none">Check ✓</button>
+      <button class="btn btn-g" onclick="np6()">New problem ↻</button>
+    </div>
   </div>
 </div>
 <div class="pnl" id="p-practice">
   <div class="card"><div class="cb"></div>
-    <div class="ct">Solve it yourself</div>
-    <div class="cs">Add these two numbers. Use column addition if it helps!</div>
-    <div class="big" style="font-size:30px;margin-bottom:14px" id="p6Q"></div>
+    <div class="ct">Solve it</div>
+    <div class="cs">Add these numbers. Pick the answer.</div>
+    <div class="big" style="font-size:28px;margin-bottom:14px" id="p6Q"></div>
     <div class="opts" id="p6O"></div><div class="fb" id="p6F"></div>
     <button class="nbtn" onclick="np6p()">Next →</button>
   </div>
 </div>
+
 </div>
 <script>
 function sw(n){document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on',t.textContent.toLowerCase()===n)});document.querySelectorAll('.pnl').forEach(function(p){var a=p.id==='p-'+n;p.classList.toggle('on',a);p.style.display=a?'flex':'none'})}
@@ -104,28 +110,110 @@ document.getElementById('p-practice').style.display='none';
 function pool4(ans,lo,hi){var s=new Set([ans]);var i=0;while(s.size<4&&i<50){i++;var w=ans+Math.round(Math.random()*8-4);if(w>=lo&&w<=hi&&w!==ans)s.add(w)}return[...s].sort(function(){return Math.random()-.5})}
 function mkOpts(cid,items,correct,fid){var c=document.getElementById(cid);c.innerHTML='';items.forEach(function(n){var b=document.createElement('button');b.className='opt';b.textContent=n;b.onclick=function(){c.querySelectorAll('.opt').forEach(function(x){x.onclick=null});var fb=document.getElementById(fid);if(String(n)===String(correct)){b.classList.add('ok');fb.textContent='🎉 Correct!';fb.style.color='var(--ok)'}else{b.classList.add('no');fb.textContent='The answer is '+correct+'.';fb.style.color='var(--no)';c.querySelectorAll('.opt').forEach(function(x){if(String(x.textContent)===String(correct))x.classList.add('ok')})}};c.appendChild(b)})}
 
-var N1,N2,colD,nC,slvO,step6,lbls;
+var N1,N2,colData,nCols,step6;
 function rn(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+
 function gen6(){N1=rn(11,99);N2=rn(11,99)}
-function init6(){var t=N1+N2;var hH=t>=100;nC=hH?3:2;lbls=hH?['H','T','O']:['T','O'];slvO=[];for(var i=nC-1;i>=0;i--)slvO.push(i);
-function gd(n,ci){if(!hH)return ci===0?Math.floor(n/10):n%10;if(ci===2)return n%10;if(ci===1)return Math.floor(n/10);return 0}
-colD=[];var carry=0;for(var i=nC-1;i>=0;i--){var d1=gd(N1,i),d2=gd(N2,i),sm=d1+d2+carry;colD[i]={d1:d1,d2:d2,ci:carry,sm:sm,dg:sm%10,co:Math.floor(sm/10)};carry=colD[i].co}step6=0}
-function solved6(){var s=new Set();for(var i=0;i<step6;i++)s.add(slvO[i]);return s}
-function draw6(){var sv=solved6();var cur=slvO[step6];var tbl=document.getElementById('sumT');
-var cW=nC>2?'52px 60px 60px 60px':'52px 60px 60px';tbl.style.gridTemplateColumns=cW;
-var h='<div></div>';for(var i=0;i<nC;i++)h+='<div style="height:26px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:'+(i===cur?'var(--ac)':'var(--ink2)')+';border-radius:6px;'+(i===cur?'background:rgba(0,0,0,.04)':'')+'">'+ lbls[i]+'</div>';
-h+='<div></div>';for(var i=0;i<nC;i++){var showC=i+1<nC&&sv.has(i+1)&&colD[i+1].co>0;h+='<div style="height:24px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:18px;font-weight:900;color:#D97706">'+(showC?colD[i+1].co:'')+'</div>'}
-h+='<div></div>';for(var i=0;i<nC;i++)h+='<div style="width:60px;height:54px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:38px;font-weight:900;color:var(--ink);border-radius:10px;'+(i===cur?'background:rgba(0,0,0,.04)':'')+'">'+colD[i].d1+'</div>';
-h+='<div style="width:52px;height:54px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:30px;font-weight:900;color:var(--ac)">+</div>';for(var i=0;i<nC;i++)h+='<div style="width:60px;height:54px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:38px;font-weight:900;color:var(--ink);border-radius:10px;'+(i===cur?'background:rgba(0,0,0,.04)':'')+'">'+colD[i].d2+'</div>';
-h+='<div></div><div style="grid-column:2/'+(2+nC)+';height:3px;background:var(--ink);border-radius:2px;margin:2px 0"></div>';for(var i=1;i<nC;i++)h+='<div style="display:none"></div>';
-h+='<div></div>';for(var i=0;i<nC;i++){if(sv.has(i))h+='<div style="width:60px;height:60px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:38px;font-weight:900;color:var(--ok);border-radius:12px;background:#DCFCE7;border:2px solid #86EFAC">'+colD[i].dg+'</div>';else if(i===cur)h+='<div style="width:60px;height:60px;display:flex;align-items:center;justify-content:center;border-radius:12px;border:2px solid var(--ac);background:rgba(0,0,0,.02)" id="curC"><input id="curI" type="number" min="0" max="9" placeholder="?" autocomplete="off" style="font-family:Grandstander,cursive;font-size:38px;font-weight:900;width:48px;height:48px;border:none;background:transparent;text-align:center;color:var(--ink);outline:none;-moz-appearance:textfield"></div>';else h+='<div style="width:60px;height:60px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:34px;color:#D1D5DB">_</div>'}
-tbl.innerHTML=h;var inp=document.getElementById('curI');if(inp){inp.oninput=function(){if(inp.value.length>1)inp.value=inp.value.slice(-1)};inp.onkeydown=function(e){if(e.key==='Enter')ck6()};inp.focus()}}
-function bldI(){var cur=slvO[step6];var cd=colD[cur];var h='<b>'+lbls[cur]+' column:</b> ';if(cd.ci>0)h+=cd.d1+' + '+cd.d2+' + <span style="color:#D97706;font-weight:900">'+cd.ci+' carry</span> = <b>'+cd.sm+'</b>. ';else h+=cd.d1+' + '+cd.d2+' = <b>'+cd.sm+'</b>. ';if(cd.co>0)h+='Write <b>'+cd.dg+'</b>. Carry <span style="color:#D97706;font-weight:900">'+cd.co+'</span>.';else h+='Write <b>'+cd.dg+'</b>.';document.getElementById('inst').innerHTML=h}
-function ck6(){var cur=slvO[step6];var cor=colD[cur].dg;var inp=document.getElementById('curI');if(!inp)return;var v=parseInt(inp.value);var fb=document.getElementById('cf');if(isNaN(v)){fb.textContent='Type a digit (0-9).';fb.style.color='var(--no)';return}if(v===cor){fb.textContent='✓';fb.style.color='var(--ok)';step6++;setTimeout(function(){fb.textContent='';if(step6>=slvO.length)dn6();else{draw6();bldI()}},400)}else{fb.textContent='Try again — re-read the instruction.';fb.style.color='var(--no)';inp.value='';inp.focus()}}
-function dn6(){draw6();document.getElementById('doneB').style.display='block';document.getElementById('doneB').textContent='🎉 '+N1+' + '+N2+' = '+(N1+N2);document.getElementById('inst').style.opacity='.3';document.getElementById('goB').style.display='none';document.getElementById('cf').textContent=''}
-function np6(){gen6();init6();document.getElementById('doneB').style.display='none';document.getElementById('inst').style.opacity='1';document.getElementById('goB').style.display='inline-block';document.getElementById('cf').textContent='';draw6();bldI()}
+function init6(){
+  var t=N1+N2;var has3=t>=100;nCols=has3?3:2;
+  function gd(n,ci){if(!has3)return ci===0?Math.floor(n/10):n%10;if(ci===2)return n%10;if(ci===1)return Math.floor(n/10);return 0}
+  colData=[];var carry=0;
+  for(var i=nCols-1;i>=0;i--){
+    var d1=gd(N1,i),d2=gd(N2,i),sm=d1+d2+carry;
+    colData[i]={d1:d1,d2:d2,ci:carry,sm:sm,dg:sm%10,co:Math.floor(sm/10)};
+    carry=colData[i].co;
+  }
+  step6=nCols-1; /* start from rightmost = ones */
+}
+
+function draw6(){
+  var lbls=nCols===3?['H','T','O']:['T','O'];
+  var cur=step6;var solved=new Set();for(var i=nCols-1;i>step6;i--)solved.add(i);
+  var cols=nCols;var cW=cols===3?'44px 56px 56px 56px':'44px 56px 56px';
+  var tbl=document.getElementById('sumT');tbl.style.gridTemplateColumns=cW;tbl.innerHTML='';
+
+  /* header labels */
+  tbl.innerHTML+='<div></div>';
+  for(var i=0;i<nCols;i++)tbl.innerHTML+='<div style="height:24px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:'+(i===cur?'var(--ac)':'var(--ink2)')+'">'+ lbls[i]+'</div>';
+
+  /* carry row */
+  tbl.innerHTML+='<div></div>';
+  for(var i=0;i<nCols;i++){
+    var showC=i+1<nCols&&solved.has(i+1)&&colData[i+1]&&colData[i+1].co>0;
+    tbl.innerHTML+='<div style="height:22px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:16px;font-weight:900;color:#D97706">'+(showC?colData[i+1].co:'')+'</div>';
+  }
+
+  /* top number */
+  tbl.innerHTML+='<div></div>';
+  for(var i=0;i<nCols;i++)tbl.innerHTML+='<div style="width:56px;height:52px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:36px;font-weight:900;color:var(--ink);border-radius:9px;'+(i===cur?'background:rgba(0,0,0,.04)':'')+'">'+colData[i].d1+'</div>';
+
+  /* bottom number with + sign */
+  tbl.innerHTML+='<div style="width:44px;height:52px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:28px;font-weight:900;color:var(--ac)">+</div>';
+  for(var i=0;i<nCols;i++)tbl.innerHTML+='<div style="width:56px;height:52px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:36px;font-weight:900;color:var(--ink);border-radius:9px;'+(i===cur?'background:rgba(0,0,0,.04)':'')+'">'+colData[i].d2+'</div>';
+
+  /* separator line */
+  tbl.innerHTML+='<div></div><div style="grid-column:2/'+(2+nCols)+';height:3px;background:var(--ink);border-radius:2px;margin:2px 0"></div>';
+  for(var x=1;x<nCols;x++)tbl.innerHTML+='<div style="display:none"></div>';
+
+  /* answer row */
+  tbl.innerHTML+='<div></div>';
+  for(var i=0;i<nCols;i++){
+    if(solved.has(i))tbl.innerHTML+='<div style="width:56px;height:58px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:36px;font-weight:900;color:var(--ok);border-radius:12px;background:#DCFCE7;border:2px solid #86EFAC">'+colData[i].dg+'</div>';
+    else if(i===cur)tbl.innerHTML+='<div style="width:56px;height:58px;display:flex;align-items:center;justify-content:center;border-radius:12px;border:2px solid var(--ac);background:rgba(0,0,0,.02)" id="curC"><input id="curI" type="number" min="0" max="9" placeholder="?" autocomplete="off" style="font-family:Grandstander,cursive;font-size:36px;font-weight:900;width:48px;height:48px;border:none;background:transparent;text-align:center;color:var(--ink);outline:none;-moz-appearance:textfield"></div>';
+    else tbl.innerHTML+='<div style="width:56px;height:58px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:32px;color:#D1D5DB">_</div>';
+  }
+
+  var inp=document.getElementById('curI');
+  if(inp){inp.oninput=function(){if(inp.value.length>1)inp.value=inp.value.slice(-1)};inp.onkeydown=function(e){if(e.key==='Enter')ck6()};inp.focus()}
+}
+
+function bi6(){
+  /* instruction: tells WHICH column and whether carry — but NOT the answer digit */
+  var cur=step6;var cd=colData[cur];var lbls=nCols===3?['hundreds','tens','ones']:['tens','ones'];
+  var col=lbls[cur];
+  var h='<b>'+col.charAt(0).toUpperCase()+col.slice(1)+' column:</b> What is '+cd.d1+' + '+cd.d2;
+  if(cd.ci>0)h+=' + <span style="color:#D97706;font-weight:900">'+cd.ci+' (carried)</span>';
+  h+='?';
+  if(cd.sm>=10)h+='<br>💡 Hint: the answer is more than 9 — you\'ll need to carry a digit.';
+  document.getElementById('inst').innerHTML=h;
+}
+
+function ck6(){
+  var inp=document.getElementById('curI');if(!inp)return;
+  var v=parseInt(inp.value);var fb=document.getElementById('cf');
+  if(isNaN(v)||v<0||v>9){fb.textContent='Type a digit 0–9.';fb.style.color='var(--no)';inp.value='';inp.focus();return}
+  var cor=colData[step6].dg;
+  if(v===cor){
+    fb.textContent='✓';fb.style.color='var(--ok)';
+    var done=step6;
+    step6--;
+    setTimeout(function(){
+      fb.textContent='';
+      if(step6<0){
+        draw6();
+        document.getElementById('doneBox').style.display='block';
+        document.getElementById('doneBox').textContent='🎉 '+N1+' + '+N2+' = '+(N1+N2);
+        document.getElementById('inst').style.opacity='.3';
+        document.getElementById('goB').style.display='none';
+      } else {draw6();bi6()}
+    },450);
+  } else {
+    fb.textContent='Not quite — try again!';fb.style.color='var(--no)';inp.value='';inp.focus();
+  }
+}
+
+function np6(){
+  gen6();init6();
+  document.getElementById('doneBox').style.display='none';
+  document.getElementById('inst').style.opacity='1';
+  document.getElementById('goB').style.display='inline-block';
+  document.getElementById('cf').textContent='';
+  draw6();bi6();
+}
 np6();
-var p6a=0;function np6p(){var a=rn(11,99),b=rn(11,99);p6a=a+b;document.getElementById('p6Q').textContent=a+' + '+b+' = ?';document.getElementById('p6F').textContent='';mkOpts('p6O',pool4(p6a,20,198),p6a,'p6F')}np6p();
+var p6a=0;
+function np6p(){var a=rn(11,99),b=rn(11,99);p6a=a+b;document.getElementById('p6Q').textContent=a+' + '+b+' = ?';document.getElementById('p6F').textContent='';mkOpts('p6O',pool4(p6a,20,198),p6a,'p6F')}
+np6p();
 
 </script>
 </body>
