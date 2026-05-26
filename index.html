@@ -1,0 +1,105 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Chapter 6 · Addition of Greater Numbers</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--dark:#05080F;--navy:#0A1628;--orange:#FF6B35;--orange2:#E8450A;--sky:#4CC9F0;--cream:#FFF5F0;--gold:#FFD43B}
+html,body{width:100%;min-height:100vh}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#05080F 0%,#0A1628 30%,#1A3A6E 70%,#2D5FA0 100%);min-height:100vh;padding:0 0 32px;display:flex;flex-direction:column;align-items:center;}
+.rocket-header{width:100%;background:linear-gradient(135deg,#05080F,#1A2A4A);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--orange);position:relative;overflow:hidden}
+.exhaust{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:60px;height:20px;background:radial-gradient(ellipse,var(--orange) 0%,transparent 70%);animation:exhaust 1.2s ease infinite;opacity:.6}
+@keyframes exhaust{0%,100%{transform:translateX(-50%) scaleX(1);opacity:.6}50%{transform:translateX(-50%) scaleX(1.4);opacity:.3}}
+.rh-title{font-family:'Fredoka One',cursive;font-size:26px;color:var(--orange);z-index:1;text-shadow:0 0 20px rgba(255,107,53,.4)}
+.rh-chip{background:var(--orange);color:#fff;font-size:12px;font-weight:900;padding:5px 14px;border-radius:20px;z-index:1;border:2px solid rgba(255,255,255,.2)}
+.page{width:100%;max-width:580px;padding:16px;display:flex;flex-direction:column;gap:20px}
+.rcard{background:rgba(255,245,240,.96);border-radius:24px;padding:22px;box-shadow:0 6px 0 rgba(0,0,0,.25),0 2px 24px rgba(0,0,0,.2);border:3px solid rgba(255,255,255,.9);position:relative;overflow:hidden}
+.rcard::before{content:'';position:absolute;top:0;left:0;right:0;height:6px;border-radius:24px 24px 0 0;background:var(--orange)}
+.rc-title{font-family:'Fredoka One',cursive;font-size:20px;color:var(--navy);margin-bottom:4px}
+.hint{font-size:13px;font-weight:700;color:#555;margin-bottom:16px;line-height:1.5}
+.col-wrapper{display:flex;justify-content:center;margin-bottom:20px}
+.sum-table{display:grid;row-gap:0;align-items:center}
+.cell{width:72px;height:62px;display:flex;align-items:center;justify-content:center;border-radius:10px;font-family:'Fredoka One',cursive;font-size:44px;color:var(--navy)}
+.cell.on{background:#FFE8D6}
+.hdr{width:72px;height:30px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:#AAA;border-radius:8px}
+.hdr.on{color:var(--orange2);background:#FFE8D6}
+.carry-c{width:72px;height:28px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:22px;color:var(--gold)}
+.op{width:64px;height:62px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:36px;color:var(--orange)}
+.ans-cell{width:72px;height:68px;display:flex;align-items:center;justify-content:center;border-radius:14px;border:3px solid #FFD5B0;background:#FFF5F0}
+.ans-cell.on{border-color:var(--orange);background:#FFE8D6}
+.ans-cell.done{border-color:#16A34A;background:#D4F5D4}
+.ans-cell.err{border-color:#FF4D4D;background:#FFE0E0;animation:shake .35s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.ans-input{font-family:'Fredoka One',cursive;font-size:44px;font-weight:400;width:60px;height:60px;border:none;background:transparent;text-align:center;color:var(--navy);outline:none;-moz-appearance:textfield}
+.ans-input::-webkit-outer-spin-button,.ans-input::-webkit-inner-spin-button{-webkit-appearance:none}
+.ans-input:disabled{color:#16A34A}
+.blank-dig{font-family:'Fredoka One',cursive;font-size:38px;color:#DDD}
+.instr{background:linear-gradient(135deg,#FFF5F0,#FFE8D6);border-radius:16px;padding:14px 16px;border:2.5px solid #FFD5B0;margin-bottom:12px;font-size:15px;font-weight:700;color:var(--navy);line-height:1.7}
+.instr strong{color:var(--orange2)}
+.cy{color:var(--gold);font-weight:900;font-size:16px}
+.fb{min-height:26px;font-family:'Fredoka One',cursive;font-size:17px;text-align:center;margin-bottom:10px}
+.fb.g{color:#16A34A}.fb.b{color:#E03131}
+.done-box{background:#D4F5D4;border-radius:16px;padding:14px;text-align:center;font-family:'Fredoka One',cursive;font-size:22px;color:#065F46;margin-bottom:12px;display:none}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap}
+.go-btn{background:linear-gradient(135deg,var(--orange),var(--orange2));color:#fff;border:none;border-radius:14px;padding:12px 26px;font-family:'Fredoka One',cursive;font-size:16px;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.15);transition:all .18s}
+.go-btn:hover{transform:scale(1.06)}
+.new-btn{background:#fff;border:2.5px solid #FFD5B0;color:var(--orange2);font-family:'Fredoka One',cursive;font-size:14px;padding:10px 22px;border-radius:14px;cursor:pointer}
+.new-btn:hover{background:#FFF5F0}
+</style></head><body>
+<div class="rocket-header"><div class="exhaust"></div><div class="rh-title">🚀 Addition of Greater Numbers</div><div class="rh-chip">Chapter 6</div></div>
+<div class="page"><div class="rcard">
+<div class="rc-title">🔢 Type the answer — one column at a time!</div>
+<div class="hint">The orange column is where you work. Read the instruction, type the digit, press Check. Start from the right!</div>
+<div class="col-wrapper"><div class="sum-table" id="sumTable"></div></div>
+<div class="instr" id="instr">Press "New problem" to start!</div>
+<div class="fb" id="fb"></div>
+<div class="done-box" id="doneBox"></div>
+<div class="btn-row">
+  <button class="go-btn" id="goBtn" onclick="check()" style="display:none">Check ✓</button>
+  <button class="new-btn" onclick="newProblem()">New problem ↻</button>
+</div>
+</div></div>
+<script>
+let N1,N2,colData,nCols,solveOrder,step,labels;
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function generate(){N1=rand(11,99);N2=rand(11,99);}
+function init(){
+  const tot=N1+N2;const hasH=tot>=100;nCols=hasH?3:2;labels=hasH?['H','T','O']:['T','O'];
+  solveOrder=[];for(let i=nCols-1;i>=0;i--)solveOrder.push(i);
+  function getDigits(n,ci){if(!hasH){return ci===0?Math.floor(n/10):n%10;}else{if(ci===2)return n%10;if(ci===1)return Math.floor(n/10);return 0;}}
+  colData=new Array(nCols);let carry=0;
+  for(let i=nCols-1;i>=0;i--){const d1=getDigits(N1,i);const d2=getDigits(N2,i);const sum=d1+d2+carry;colData[i]={d1,d2,carryIn:carry,sum,digit:sum%10,carryOut:Math.floor(sum/10)};carry=colData[i].carryOut;}
+  step=0;
+}
+function solvedSet(){return new Set(solveOrder.slice(0,step));}
+function draw(){
+  const solved=solvedSet();const cur=solveOrder[step];const tbl=document.getElementById('sumTable');
+  const colPx=Array(nCols).fill('72px').join(' ');tbl.style.gridTemplateColumns=`64px ${colPx}`;
+  let html='';
+  html+=`<div></div>`;for(let i=0;i<nCols;i++)html+=`<div class="hdr${i===cur?' on':''}">${labels[i]}</div>`;
+  html+=`<div></div>`;for(let i=0;i<nCols;i++){const rightSolved=solved.has(i+1);const cv=(i+1<nCols&&rightSolved&&colData[i+1].carryOut>0)?colData[i+1].carryOut:'';html+=`<div class="carry-c">${cv}</div>`;}
+  html+=`<div></div>`;for(let i=0;i<nCols;i++)html+=`<div class="cell${i===cur?' on':''}">${colData[i].d1}</div>`;
+  html+=`<div class="op">+</div>`;for(let i=0;i<nCols;i++)html+=`<div class="cell${i===cur?' on':''}">${colData[i].d2}</div>`;
+  html+=`<div></div><div style="grid-column:2/${2+nCols};border-top:3px solid var(--navy);margin:4px 0"></div>`;for(let i=1;i<nCols;i++)html+=`<div style="display:none"></div>`;
+  html+=`<div></div>`;
+  for(let i=0;i<nCols;i++){if(solved.has(i))html+=`<div class="ans-cell done"><input class="ans-input" value="${colData[i].digit}" disabled></div>`;else if(i===cur)html+=`<div class="ans-cell on" id="curCell"><input class="ans-input" id="curIn" type="number" min="0" max="9" placeholder="?" autocomplete="off"></div>`;else html+=`<div class="ans-cell"><span class="blank-dig">_</span></div>`;}
+  tbl.innerHTML=html;
+  const inp=document.getElementById('curIn');if(inp){inp.oninput=()=>{if(inp.value.length>1)inp.value=inp.value.slice(-1);};inp.onkeydown=e=>{if(e.key==='Enter')check();};inp.focus();}
+}
+function buildInstr(){
+  const cur=solveOrder[step];const cd=colData[cur];let html=`<strong>${labels[cur]} column</strong> (orange): `;
+  if(cd.carryIn>0)html+=`${cd.d1} + ${cd.d2} + <span class="cy">${cd.carryIn} (carry)</span> = <strong>${cd.sum}</strong>.<br>`;
+  else html+=`${cd.d1} + ${cd.d2} = <strong>${cd.sum}</strong>.<br>`;
+  if(cd.carryOut>0)html+=`Write <strong>${cd.digit}</strong>. Carry <span class="cy">${cd.carryOut}</span> to the ${labels[cur-1]} column.`;
+  else html+=`Write <strong>${cd.digit}</strong> in the orange box.`;
+  document.getElementById('instr').innerHTML=html;
+}
+function check(){
+  const cur=solveOrder[step];const correct=colData[cur].digit;const inp=document.getElementById('curIn');if(!inp)return;
+  const v=parseInt(inp.value);const fb=document.getElementById('fb');
+  if(isNaN(v)){fb.textContent='Type a digit 0–9!';fb.className='fb b';return;}
+  if(v===correct){fb.textContent='✓ Correct! ⭐';fb.className='fb g';document.getElementById('curCell').classList.replace('on','done');step++;setTimeout(()=>{fb.textContent='';if(step>=solveOrder.length)done();else{draw();buildInstr();}},600);}
+  else{fb.textContent='Not right — re-read the instruction!';fb.className='fb b';const cell=document.getElementById('curCell');cell.classList.add('err');inp.value='';inp.focus();setTimeout(()=>cell.classList.remove('err'),500);}
+}
+function done(){draw();document.getElementById('doneBox').style.display='block';document.getElementById('doneBox').textContent=`🎉 ${N1} + ${N2} = ${N1+N2}! Excellent! 🚀`;document.getElementById('instr').style.opacity='.35';document.getElementById('goBtn').style.display='none';document.getElementById('fb').textContent='';}
+function newProblem(){generate();init();document.getElementById('doneBox').style.display='none';document.getElementById('instr').style.opacity='1';document.getElementById('goBtn').style.display='inline-block';document.getElementById('fb').textContent='';document.getElementById('fb').className='fb';draw();buildInstr();}
+newProblem();
+</script></body></html>
