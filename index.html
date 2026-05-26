@@ -1,105 +1,308 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Chapter 6 · Addition of Greater Numbers</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 6 · Addition of Greater Numbers</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--dark:#05080F;--navy:#0A1628;--orange:#FF6B35;--orange2:#E8450A;--sky:#4CC9F0;--cream:#FFF5F0;--gold:#FFD43B}
-html,body{width:100%;min-height:100vh}
-body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#05080F 0%,#0A1628 30%,#1A3A6E 70%,#2D5FA0 100%);min-height:100vh;padding:0 0 32px;display:flex;flex-direction:column;align-items:center;}
-.rocket-header{width:100%;background:linear-gradient(135deg,#05080F,#1A2A4A);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--orange);position:relative;overflow:hidden}
-.exhaust{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:60px;height:20px;background:radial-gradient(ellipse,var(--orange) 0%,transparent 70%);animation:exhaust 1.2s ease infinite;opacity:.6}
-@keyframes exhaust{0%,100%{transform:translateX(-50%) scaleX(1);opacity:.6}50%{transform:translateX(-50%) scaleX(1.4);opacity:.3}}
-.rh-title{font-family:'Fredoka One',cursive;font-size:26px;color:var(--orange);z-index:1;text-shadow:0 0 20px rgba(255,107,53,.4)}
-.rh-chip{background:var(--orange);color:#fff;font-size:12px;font-weight:900;padding:5px 14px;border-radius:20px;z-index:1;border:2px solid rgba(255,255,255,.2)}
-.page{width:100%;max-width:580px;padding:16px;display:flex;flex-direction:column;gap:20px}
-.rcard{background:rgba(255,245,240,.96);border-radius:24px;padding:22px;box-shadow:0 6px 0 rgba(0,0,0,.25),0 2px 24px rgba(0,0,0,.2);border:3px solid rgba(255,255,255,.9);position:relative;overflow:hidden}
-.rcard::before{content:'';position:absolute;top:0;left:0;right:0;height:6px;border-radius:24px 24px 0 0;background:var(--orange)}
-.rc-title{font-family:'Fredoka One',cursive;font-size:20px;color:var(--navy);margin-bottom:4px}
-.hint{font-size:13px;font-weight:700;color:#555;margin-bottom:16px;line-height:1.5}
-.col-wrapper{display:flex;justify-content:center;margin-bottom:20px}
+:root{
+  --accent:#0891B2;--accent-light:#ECFEFF;--accent-mid:#A5F3FC;
+  --accent-dark:#0E7490;--bg:#F7F8FA;--surface:#FFFFFF;
+  --ink:#1C2B2B;--ink2:#4B6060;--border:#E4EAE9;
+  --success:#16A34A;--success-bg:#DCFCE7;
+  --error:#DC2626;--error-bg:#FEE2E2;
+  --carry:#D97706;
+}
+html,body{width:100%;min-height:100vh;font-family:'Nunito',sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden}
+
+.header{width:100%;background:var(--surface);border-bottom:2px solid var(--border);padding:16px 20px 0;display:flex;flex-direction:column;align-items:center;position:sticky;top:0;z-index:100}
+.header-row{width:100%;max-width:640px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.chapter-label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);background:var(--accent-light);padding:4px 12px;border-radius:20px}
+.header-title{font-size:20px;font-weight:900;color:var(--ink)}
+.tabs{display:flex;gap:4px;width:100%;max-width:640px}
+.tab{flex:1;padding:10px 0;text-align:center;font-size:14px;font-weight:800;cursor:pointer;border-bottom:3px solid transparent;color:var(--ink2);transition:all .2s;border-radius:8px 8px 0 0}
+.tab:hover{color:var(--accent);background:var(--accent-light)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+.page{width:100%;max-width:640px;margin:0 auto;padding:24px 16px 40px;display:flex;flex-direction:column;gap:20px}
+.panel{display:none}.panel.active{display:flex;flex-direction:column;gap:20px}
+
+.card{background:var(--surface);border-radius:16px;padding:22px;border:1.5px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.05);position:relative}
+.card-accent{position:absolute;top:0;left:0;bottom:0;width:4px;border-radius:16px 0 0 16px}
+.card-accent.cyan{background:var(--accent)}
+.card-accent.green{background:#16A34A}
+.card-title{font-size:17px;font-weight:900;color:var(--ink);margin-bottom:4px;padding-left:12px}
+.card-sub{font-size:13px;font-weight:700;color:var(--ink2);margin-bottom:18px;padding-left:12px;line-height:1.5}
+
+/* ── COLUMN ADDITION ── */
+.instr-box{background:var(--accent-light);border:1.5px solid var(--accent-mid);border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:14px;font-weight:700;color:var(--ink);line-height:1.8}
+.instr-box strong{color:var(--accent-dark)}
+.carry-note{color:var(--carry);font-weight:900}
+
+.col-wrap{display:flex;justify-content:center;margin-bottom:20px;overflow-x:auto;padding-bottom:4px}
+@media(max-width:400px){.num-cell{width:52px;height:48px;font-size:34px}.hdr{width:52px}.carry-row-cell{width:52px}.ans-cell{width:52px;height:54px}.ans-input{width:42px;height:42px;font-size:34px}.op-cell{width:40px;font-size:26px}}
 .sum-table{display:grid;row-gap:0;align-items:center}
-.cell{width:72px;height:62px;display:flex;align-items:center;justify-content:center;border-radius:10px;font-family:'Fredoka One',cursive;font-size:44px;color:var(--navy)}
-.cell.on{background:#FFE8D6}
-.hdr{width:72px;height:30px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:#AAA;border-radius:8px}
-.hdr.on{color:var(--orange2);background:#FFE8D6}
-.carry-c{width:72px;height:28px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:22px;color:var(--gold)}
-.op{width:64px;height:62px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:36px;color:var(--orange)}
-.ans-cell{width:72px;height:68px;display:flex;align-items:center;justify-content:center;border-radius:14px;border:3px solid #FFD5B0;background:#FFF5F0}
-.ans-cell.on{border-color:var(--orange);background:#FFE8D6}
-.ans-cell.done{border-color:#16A34A;background:#D4F5D4}
-.ans-cell.err{border-color:#FF4D4D;background:#FFE0E0;animation:shake .35s}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.ans-input{font-family:'Fredoka One',cursive;font-size:44px;font-weight:400;width:60px;height:60px;border:none;background:transparent;text-align:center;color:var(--navy);outline:none;-moz-appearance:textfield}
+
+.hdr{height:28px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--ink2);border-radius:6px}
+.hdr.active-col{color:var(--accent-dark);background:var(--accent-light)}
+
+.carry-row-cell{height:26px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:var(--carry)}
+
+.num-cell{width:64px;height:58px;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:900;color:var(--ink);border-radius:10px}
+.num-cell.active-col{background:var(--accent-light)}
+
+.op-cell{width:52px;height:58px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:var(--accent)}
+
+.divider-cell{height:3px;background:var(--ink);border-radius:2px;margin:2px 0}
+
+.ans-cell{width:64px;height:64px;display:flex;align-items:center;justify-content:center;border-radius:12px;border:2px solid var(--border);background:var(--bg)}
+.ans-cell.active-col{border-color:var(--accent);background:var(--accent-light)}
+.ans-cell.done{border-color:var(--success);background:var(--success-bg)}
+.ans-cell.err{border-color:var(--error);background:var(--error-bg);animation:shake .35s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.ans-input{font-size:40px;font-weight:900;width:52px;height:52px;border:none;background:transparent;text-align:center;color:var(--ink);outline:none;-moz-appearance:textfield}
 .ans-input::-webkit-outer-spin-button,.ans-input::-webkit-inner-spin-button{-webkit-appearance:none}
-.ans-input:disabled{color:#16A34A}
-.blank-dig{font-family:'Fredoka One',cursive;font-size:38px;color:#DDD}
-.instr{background:linear-gradient(135deg,#FFF5F0,#FFE8D6);border-radius:16px;padding:14px 16px;border:2.5px solid #FFD5B0;margin-bottom:12px;font-size:15px;font-weight:700;color:var(--navy);line-height:1.7}
-.instr strong{color:var(--orange2)}
-.cy{color:var(--gold);font-weight:900;font-size:16px}
-.fb{min-height:26px;font-family:'Fredoka One',cursive;font-size:17px;text-align:center;margin-bottom:10px}
-.fb.g{color:#16A34A}.fb.b{color:#E03131}
-.done-box{background:#D4F5D4;border-radius:16px;padding:14px;text-align:center;font-family:'Fredoka One',cursive;font-size:22px;color:#065F46;margin-bottom:12px;display:none}
+.ans-input:disabled{color:var(--success)}
+.blank-dig{font-size:34px;font-weight:900;color:var(--border)}
+
+.fb{min-height:24px;font-size:15px;font-weight:800;text-align:center;margin-bottom:12px}
+.fb.ok{color:var(--success)}.fb.no{color:var(--error)}
+
+.done-banner{background:var(--success-bg);border:1.5px solid #86EFAC;border-radius:12px;padding:14px;text-align:center;font-size:20px;font-weight:900;color:var(--success);margin-bottom:12px;display:none}
+
 .btn-row{display:flex;gap:10px;flex-wrap:wrap}
-.go-btn{background:linear-gradient(135deg,var(--orange),var(--orange2));color:#fff;border:none;border-radius:14px;padding:12px 26px;font-family:'Fredoka One',cursive;font-size:16px;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.15);transition:all .18s}
-.go-btn:hover{transform:scale(1.06)}
-.new-btn{background:#fff;border:2.5px solid #FFD5B0;color:var(--orange2);font-family:'Fredoka One',cursive;font-size:14px;padding:10px 22px;border-radius:14px;cursor:pointer}
-.new-btn:hover{background:#FFF5F0}
-</style></head><body>
-<div class="rocket-header"><div class="exhaust"></div><div class="rh-title">🚀 Addition of Greater Numbers</div><div class="rh-chip">Chapter 6</div></div>
-<div class="page"><div class="rcard">
-<div class="rc-title">🔢 Type the answer — one column at a time!</div>
-<div class="hint">The orange column is where you work. Read the instruction, type the digit, press Check. Start from the right!</div>
-<div class="col-wrapper"><div class="sum-table" id="sumTable"></div></div>
-<div class="instr" id="instr">Press "New problem" to start!</div>
-<div class="fb" id="fb"></div>
-<div class="done-box" id="doneBox"></div>
-<div class="btn-row">
-  <button class="go-btn" id="goBtn" onclick="check()" style="display:none">Check ✓</button>
-  <button class="new-btn" onclick="newProblem()">New problem ↻</button>
+.go-btn{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:12px 24px;font-size:15px;font-weight:800;cursor:pointer;transition:all .18s}
+.go-btn:hover{background:var(--accent-dark);transform:translateY(-1px)}
+.new-btn{background:var(--surface);border:2px solid var(--border);color:var(--ink2);font-size:14px;font-weight:800;padding:11px 22px;border-radius:12px;cursor:pointer;transition:all .15s}
+.new-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── PRACTICE ── */
+.score-bar{display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:10px;padding:10px 14px;border:1.5px solid var(--border)}
+.score-label{font-size:12px;font-weight:800;color:var(--ink2);flex:1}
+.score-nums{font-size:14px;font-weight:900;color:var(--accent)}
+
+.prac-problem{font-size:32px;font-weight:900;color:var(--ink);text-align:center;margin-bottom:16px;letter-spacing:2px}
+.prac-inp{font-size:32px;font-weight:900;width:120px;height:60px;border-radius:12px;border:2px solid var(--border);text-align:center;color:var(--accent-dark);outline:none;transition:border-color .15s;background:var(--accent-light);-moz-appearance:textfield;display:block;margin:0 auto 8px}
+.prac-inp::-webkit-outer-spin-button,.prac-inp::-webkit-inner-spin-button{-webkit-appearance:none}
+.prac-inp:focus{border-color:var(--accent)}
+.prac-check{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:12px 26px;font-size:15px;font-weight:800;cursor:pointer;transition:all .18s;display:block;margin:0 auto}
+.prac-check:hover{background:var(--accent-dark);transform:translateY(-1px)}
+.prac-fb{font-size:15px;font-weight:800;min-height:22px;margin-top:10px;text-align:center}
+.next-btn{margin-top:14px;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:12px 26px;font-size:15px;font-weight:800;cursor:pointer;transition:all .18s;display:block;margin:14px auto 0}
+.next-btn:hover{background:var(--accent-dark);transform:translateY(-1px)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-row">
+    <span class="chapter-label">Chapter 6</span>
+    <span class="header-title">Addition of Greater Numbers</span>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('learn')">Learn</div>
+    <div class="tab" onclick="switchTab('practice')">Practice</div>
+  </div>
 </div>
-</div></div>
+
+<div class="page">
+
+  <!-- LEARN: step-by-step column addition -->
+  <div class="panel active" id="panel-learn">
+    <div class="card">
+      <div class="card-accent cyan"></div>
+      <div class="card-title">Add one column at a time</div>
+      <div class="card-sub">The highlighted column is where you work. Read the instruction, type the digit, press Check. Always start from the right.</div>
+
+      <div class="col-wrap"><div class="sum-table" id="sumTable"></div></div>
+      <div class="instr-box" id="instrBox">Press "New problem" to begin.</div>
+      <div class="fb" id="fb"></div>
+      <div class="done-banner" id="doneBanner"></div>
+      <div class="btn-row">
+        <button class="go-btn" id="goBtn" onclick="check()" style="display:none">Check ✓</button>
+        <button class="new-btn" onclick="newProblem()">New problem ↻</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRACTICE: type the full answer -->
+  <div class="panel" id="panel-practice">
+    <div class="score-bar">
+      <span class="score-label">Questions answered</span>
+      <span class="score-nums" id="scoreDisplay">0 correct / 0 total</span>
+    </div>
+    <div class="card">
+      <div class="card-accent green"></div>
+      <div class="card-title">Work it out and type the answer</div>
+      <div class="card-sub">Use column addition. Start from the ones — remember to carry if needed!</div>
+      <div class="prac-problem" id="pracProblem"></div>
+      <input type="number" class="prac-inp" id="pracInput" min="0" max="999" placeholder="?">
+      <button class="prac-check" onclick="checkPrac()">Check ✓</button>
+      <div class="prac-fb" id="pracFb"></div>
+      <button class="next-btn" onclick="newPrac()">Next question →</button>
+    </div>
+  </div>
+
+</div>
+
 <script>
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['learn','practice'][i]===name));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+}
+
+/* ── LEARN: STEP-BY-STEP COLUMN ADDITION ── */
 let N1,N2,colData,nCols,solveOrder,step,labels;
+
 function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+
 function generate(){N1=rand(11,99);N2=rand(11,99);}
+
 function init(){
-  const tot=N1+N2;const hasH=tot>=100;nCols=hasH?3:2;labels=hasH?['H','T','O']:['T','O'];
+  const tot=N1+N2;const hasH=tot>=100;nCols=hasH?3:2;
+  labels=hasH?['H','T','O']:['T','O'];
   solveOrder=[];for(let i=nCols-1;i>=0;i--)solveOrder.push(i);
-  function getDigits(n,ci){if(!hasH){return ci===0?Math.floor(n/10):n%10;}else{if(ci===2)return n%10;if(ci===1)return Math.floor(n/10);return 0;}}
+  function getDigit(n,ci){
+    if(!hasH){return ci===0?Math.floor(n/10):n%10;}
+    if(ci===2)return n%10;if(ci===1)return Math.floor(n/10);return 0;
+  }
   colData=new Array(nCols);let carry=0;
-  for(let i=nCols-1;i>=0;i--){const d1=getDigits(N1,i);const d2=getDigits(N2,i);const sum=d1+d2+carry;colData[i]={d1,d2,carryIn:carry,sum,digit:sum%10,carryOut:Math.floor(sum/10)};carry=colData[i].carryOut;}
+  for(let i=nCols-1;i>=0;i--){
+    const d1=getDigit(N1,i),d2=getDigit(N2,i),sum=d1+d2+carry;
+    colData[i]={d1,d2,carryIn:carry,sum,digit:sum%10,carryOut:Math.floor(sum/10)};
+    carry=colData[i].carryOut;
+  }
   step=0;
 }
-function solvedSet(){return new Set(solveOrder.slice(0,step));}
+
 function draw(){
-  const solved=solvedSet();const cur=solveOrder[step];const tbl=document.getElementById('sumTable');
-  const colPx=Array(nCols).fill('72px').join(' ');tbl.style.gridTemplateColumns=`64px ${colPx}`;
+  const solved=new Set(solveOrder.slice(0,step));
+  const cur=solveOrder[step];
+  const tbl=document.getElementById('sumTable');
+  const colW=64;const opW=52;
+  const isMobile=window.innerWidth<400;
+  const colW2=isMobile?50:colW;const opW2=isMobile?38:opW;
+  const cols=`${opW2}px ${Array(nCols).fill(colW2+'px').join(' ')}`;
+  tbl.style.gridTemplateColumns=cols;
+
   let html='';
-  html+=`<div></div>`;for(let i=0;i<nCols;i++)html+=`<div class="hdr${i===cur?' on':''}">${labels[i]}</div>`;
-  html+=`<div></div>`;for(let i=0;i<nCols;i++){const rightSolved=solved.has(i+1);const cv=(i+1<nCols&&rightSolved&&colData[i+1].carryOut>0)?colData[i+1].carryOut:'';html+=`<div class="carry-c">${cv}</div>`;}
-  html+=`<div></div>`;for(let i=0;i<nCols;i++)html+=`<div class="cell${i===cur?' on':''}">${colData[i].d1}</div>`;
-  html+=`<div class="op">+</div>`;for(let i=0;i<nCols;i++)html+=`<div class="cell${i===cur?' on':''}">${colData[i].d2}</div>`;
-  html+=`<div></div><div style="grid-column:2/${2+nCols};border-top:3px solid var(--navy);margin:4px 0"></div>`;for(let i=1;i<nCols;i++)html+=`<div style="display:none"></div>`;
+
+  // header row
   html+=`<div></div>`;
-  for(let i=0;i<nCols;i++){if(solved.has(i))html+=`<div class="ans-cell done"><input class="ans-input" value="${colData[i].digit}" disabled></div>`;else if(i===cur)html+=`<div class="ans-cell on" id="curCell"><input class="ans-input" id="curIn" type="number" min="0" max="9" placeholder="?" autocomplete="off"></div>`;else html+=`<div class="ans-cell"><span class="blank-dig">_</span></div>`;}
+  for(let i=0;i<nCols;i++)html+=`<div class="hdr${i===cur?' active-col':''}">${labels[i]}</div>`;
+
+  // carry row
+  html+=`<div></div>`;
+  for(let i=0;i<nCols;i++){
+    const showCarry=i+1<nCols&&solved.has(i+1)&&colData[i+1].carryOut>0;
+    html+=`<div class="carry-row-cell">${showCarry?colData[i+1].carryOut:''}</div>`;
+  }
+
+  // N1 row
+  html+=`<div></div>`;
+  for(let i=0;i<nCols;i++)html+=`<div class="num-cell${i===cur?' active-col':''}">${colData[i].d1}</div>`;
+
+  // N2 row with operator
+  html+=`<div class="op-cell">+</div>`;
+  for(let i=0;i<nCols;i++)html+=`<div class="num-cell${i===cur?' active-col':''}">${colData[i].d2}</div>`;
+
+  // divider
+  html+=`<div></div><div style="grid-column:2/${2+nCols};height:3px;background:var(--ink);border-radius:2px;margin:2px 0"></div>`;
+  for(let i=1;i<nCols;i++)html+=`<div style="display:none"></div>`;
+
+  // answer row
+  html+=`<div></div>`;
+  for(let i=0;i<nCols;i++){
+    if(solved.has(i)){
+      html+=`<div class="ans-cell done"><input class="ans-input" value="${colData[i].digit}" disabled></div>`;
+    } else if(i===cur){
+      html+=`<div class="ans-cell active-col" id="curCell"><input class="ans-input" id="curIn" type="number" min="0" max="9" placeholder="?" autocomplete="off"></div>`;
+    } else {
+      html+=`<div class="ans-cell"><span class="blank-dig">_</span></div>`;
+    }
+  }
+
   tbl.innerHTML=html;
-  const inp=document.getElementById('curIn');if(inp){inp.oninput=()=>{if(inp.value.length>1)inp.value=inp.value.slice(-1);};inp.onkeydown=e=>{if(e.key==='Enter')check();};inp.focus();}
+  const inp=document.getElementById('curIn');
+  if(inp){
+    inp.oninput=()=>{if(inp.value.length>1)inp.value=inp.value.slice(-1);};
+    inp.onkeydown=e=>{if(e.key==='Enter')check();};
+    inp.focus();
+  }
 }
+
 function buildInstr(){
-  const cur=solveOrder[step];const cd=colData[cur];let html=`<strong>${labels[cur]} column</strong> (orange): `;
-  if(cd.carryIn>0)html+=`${cd.d1} + ${cd.d2} + <span class="cy">${cd.carryIn} (carry)</span> = <strong>${cd.sum}</strong>.<br>`;
-  else html+=`${cd.d1} + ${cd.d2} = <strong>${cd.sum}</strong>.<br>`;
-  if(cd.carryOut>0)html+=`Write <strong>${cd.digit}</strong>. Carry <span class="cy">${cd.carryOut}</span> to the ${labels[cur-1]} column.`;
-  else html+=`Write <strong>${cd.digit}</strong> in the orange box.`;
-  document.getElementById('instr').innerHTML=html;
+  const cur=solveOrder[step];const cd=colData[cur];
+  let html=`<strong>${labels[cur]} column</strong>: `;
+  if(cd.carryIn>0)html+=`${cd.d1} + ${cd.d2} + <span class="carry-note">${cd.carryIn} carry</span> = <strong>${cd.sum}</strong>. `;
+  else html+=`${cd.d1} + ${cd.d2} = <strong>${cd.sum}</strong>. `;
+  if(cd.carryOut>0)html+=`Write <strong>${cd.digit}</strong>. Carry <span class="carry-note">${cd.carryOut}</span> to the ${labels[cur-1]} column.`;
+  else html+=`Write <strong>${cd.digit}</strong>.`;
+  document.getElementById('instrBox').innerHTML=html;
 }
+
 function check(){
-  const cur=solveOrder[step];const correct=colData[cur].digit;const inp=document.getElementById('curIn');if(!inp)return;
+  const cur=solveOrder[step];const correct=colData[cur].digit;
+  const inp=document.getElementById('curIn');if(!inp)return;
   const v=parseInt(inp.value);const fb=document.getElementById('fb');
-  if(isNaN(v)){fb.textContent='Type a digit 0–9!';fb.className='fb b';return;}
-  if(v===correct){fb.textContent='✓ Correct! ⭐';fb.className='fb g';document.getElementById('curCell').classList.replace('on','done');step++;setTimeout(()=>{fb.textContent='';if(step>=solveOrder.length)done();else{draw();buildInstr();}},600);}
-  else{fb.textContent='Not right — re-read the instruction!';fb.className='fb b';const cell=document.getElementById('curCell');cell.classList.add('err');inp.value='';inp.focus();setTimeout(()=>cell.classList.remove('err'),500);}
+  if(isNaN(v)){fb.textContent='Type a digit (0–9).';fb.className='fb no';return;}
+  if(v===correct){
+    fb.textContent='Correct!';fb.className='fb ok';
+    document.getElementById('curCell').classList.replace('active-col','done');
+    step++;
+    setTimeout(()=>{fb.textContent='';if(step>=solveOrder.length)done();else{draw();buildInstr();}},500);
+  } else {
+    fb.textContent='Not right — re-read the instruction and try again.';fb.className='fb no';
+    const cell=document.getElementById('curCell');cell.classList.add('err');
+    inp.value='';inp.focus();
+    setTimeout(()=>cell.classList.remove('err'),400);
+  }
 }
-function done(){draw();document.getElementById('doneBox').style.display='block';document.getElementById('doneBox').textContent=`🎉 ${N1} + ${N2} = ${N1+N2}! Excellent! 🚀`;document.getElementById('instr').style.opacity='.35';document.getElementById('goBtn').style.display='none';document.getElementById('fb').textContent='';}
-function newProblem(){generate();init();document.getElementById('doneBox').style.display='none';document.getElementById('instr').style.opacity='1';document.getElementById('goBtn').style.display='inline-block';document.getElementById('fb').textContent='';document.getElementById('fb').className='fb';draw();buildInstr();}
+
+function done(){
+  draw();
+  const banner=document.getElementById('doneBanner');
+  banner.style.display='block';banner.textContent=N1+' + '+N2+' = '+(N1+N2)+'. Well done!';
+  document.getElementById('instrBox').style.opacity='.4';
+  document.getElementById('goBtn').style.display='none';
+  document.getElementById('fb').textContent='';
+}
+
+function newProblem(){
+  generate();init();
+  document.getElementById('doneBanner').style.display='none';
+  document.getElementById('instrBox').style.opacity='1';
+  document.getElementById('goBtn').style.display='inline-block';
+  document.getElementById('fb').textContent='';
+  document.getElementById('fb').className='fb';
+  draw();buildInstr();
+}
 newProblem();
-</script></body></html>
+
+/* ── PRACTICE ── */
+let correct=0,total=0,pracAns=0;
+function updateScore(){document.getElementById('scoreDisplay').textContent=correct+' correct / '+total+' total';}
+
+function newPrac(){
+  const a=rand(11,99),b=rand(11,99);pracAns=a+b;
+  document.getElementById('pracProblem').textContent=a+' + '+b+' = ?';
+  document.getElementById('pracInput').value='';
+  document.getElementById('pracFb').textContent='';
+}
+function checkPrac(){
+  const v=parseInt(document.getElementById('pracInput').value);
+  const fb=document.getElementById('pracFb');
+  if(isNaN(v)){fb.textContent='Type your answer.';fb.style.color='var(--ink2)';return;}
+  total++;
+  if(v===pracAns){correct++;fb.textContent='Correct! The answer is '+pracAns+'.';fb.style.color='var(--success)';}
+  else{fb.textContent='Not quite. The answer is '+pracAns+'. Use column addition — start from the ones!';fb.style.color='var(--error)';}
+  updateScore();
+}
+newPrac();
+</script>
+</body>
+</html>
