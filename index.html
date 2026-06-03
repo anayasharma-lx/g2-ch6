@@ -23,22 +23,8 @@ html,body{width:100%;min-height:100vh;font-family:'Poppins',sans-serif;backgroun
 .cb{position:absolute;top:0;left:0;bottom:0;width:5px;border-radius:var(--r) 0 0 var(--r);background:var(--ac)}
 .ct{font-family:'Grandstander',cursive;font-size:15px;font-weight:800;padding-left:14px;margin-bottom:3px;line-height:1.3}
 .cs{font-size:12px;color:var(--ink2);padding-left:14px;margin-bottom:14px;line-height:1.6}
-/* stepper */
-.cr{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.cg{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.03);border-radius:12px;padding:8px 12px;border:1.5px solid rgba(0,0,0,.06)}
-.cl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;min-width:48px}
-.sb{width:34px;height:34px;border-radius:50%;border:none;font-size:18px;font-weight:900;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.12s;box-shadow:0 2px 6px rgba(0,0,0,.15)}
-.sb:active{transform:scale(.88)}
-.sv{font-family:'Grandstander',cursive;font-size:28px;font-weight:900;min-width:28px;text-align:center}
-/* blocks */
-.bx{background:rgba(0,0,0,.02);border-radius:14px;border:1.5px solid rgba(0,0,0,.06);padding:12px;min-height:60px;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-bottom:14px}
-.flat{display:grid;grid-template-columns:repeat(10,8px);gap:1px}.flat-c{width:8px;height:8px;border-radius:1px;opacity:.8}
-.rod{display:flex;flex-direction:column;gap:1px}.rod-c{width:10px;height:10px;border-radius:1px;opacity:.8}
-.units{display:flex;flex-wrap:wrap;gap:2px;max-width:58px;align-self:flex-end}.unit-c{width:10px;height:10px;border-radius:2px;opacity:.8}
-.sep{width:1px;background:#D1D5DB;align-self:stretch;margin:0 3px}
-/* options */
 .opts{display:flex;gap:8px;flex-wrap:wrap}
-.opt{font-family:'Grandstander',cursive;font-size:22px;font-weight:800;min-width:72px;height:54px;border-radius:16px;border:2.5px solid rgba(0,0,0,.08);background:#fff;cursor:pointer;color:var(--ink);display:flex;align-items:center;justify-content:center;transition:.15s;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.opt{font-family:'Grandstander',cursive;font-size:20px;font-weight:800;min-width:72px;height:54px;border-radius:16px;border:2.5px solid rgba(0,0,0,.08);background:#fff;cursor:pointer;color:var(--ink);display:flex;align-items:center;justify-content:center;transition:.15s;box-shadow:0 2px 8px rgba(0,0,0,.05);padding:0 12px}
 .opt:hover{border-color:var(--ac);transform:translateY(-2px)}
 .opt.ok{background:#DCFCE7;border-color:var(--ok);color:#15803D;animation:pop .3s}
 .opt.no{background:#FEE2E2;border-color:var(--no);color:var(--no);animation:shk .35s}
@@ -52,18 +38,10 @@ html,body{width:100%;min-height:100vh;font-family:'Poppins',sans-serif;backgroun
 .btn-p{background:var(--ac);color:#fff}
 .btn-g{background:#fff;color:var(--ink2);border:1.5px solid rgba(0,0,0,.1)}
 .btn-g:hover{border-color:var(--ac);color:var(--ac)}
-.chal{background:rgba(0,0,0,.02);border-radius:16px;padding:14px;border:1.5px dashed rgba(0,0,0,.1);margin-top:10px}
-.chal-q{font-family:'Grandstander',cursive;font-size:14px;font-weight:800;margin-bottom:10px}
-.chal-q b{color:var(--ac);font-size:22px}
-canvas{display:block;border-radius:10px}
-/* drag & tap shared */
-.tappable{cursor:pointer;user-select:none;transition:transform .15s}
-.tappable:hover{transform:scale(1.08)}
-.tappable:active{transform:scale(.92)}
-/* misc */
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.pill{display:inline-block;font-family:'Grandstander',cursive;font-size:14px;font-weight:800;padding:6px 18px;border-radius:30px}
 .big{font-family:'Grandstander',cursive;font-weight:900;line-height:1;text-align:center}
+.qbox{background:rgba(0,0,0,.02);border-radius:14px;padding:14px 16px;border:1.5px solid rgba(0,0,0,.06);margin-bottom:14px;font-size:15px;font-weight:600;line-height:1.7;color:var(--ink)}
+.qtag{display:inline-block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;background:var(--ac);color:#fff;border-radius:20px;padding:2px 10px;margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -93,12 +71,14 @@ canvas{display:block;border-radius:10px}
     </div>
   </div>
 </div>
+
 <div class="pnl" id="p-practice">
   <div class="card"><div class="cb"></div>
     <div class="ct">Solve it</div>
-    <div class="cs">Add these numbers. Pick the answer.</div>
-    <div class="big" style="font-size:28px;margin-bottom:14px" id="p6Q"></div>
-    <div class="opts" id="p6O"></div><div class="fb" id="p6F"></div>
+    <div class="cs">Some questions are calculations, some are word problems. Pick the right answer.</div>
+    <div class="qbox" id="p6Q"></div>
+    <div class="opts" id="p6O"></div>
+    <div class="fb" id="p6F"></div>
     <button class="nbtn" onclick="np6p()">Next →</button>
   </div>
 </div>
@@ -107,12 +87,38 @@ canvas{display:block;border-radius:10px}
 <script>
 function sw(n){document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on',t.textContent.toLowerCase()===n)});document.querySelectorAll('.pnl').forEach(function(p){var a=p.id==='p-'+n;p.classList.toggle('on',a);p.style.display=a?'flex':'none'})}
 document.getElementById('p-practice').style.display='none';
-function pool4(ans,lo,hi){var s=new Set([ans]);var i=0;while(s.size<4&&i<50){i++;var w=ans+Math.round(Math.random()*8-4);if(w>=lo&&w<=hi&&w!==ans)s.add(w)}return[...s].sort(function(){return Math.random()-.5})}
-function mkOpts(cid,items,correct,fid){var c=document.getElementById(cid);c.innerHTML='';items.forEach(function(n){var b=document.createElement('button');b.className='opt';b.textContent=n;b.onclick=function(){c.querySelectorAll('.opt').forEach(function(x){x.onclick=null});var fb=document.getElementById(fid);if(String(n)===String(correct)){b.classList.add('ok');fb.textContent='🎉 Correct!';fb.style.color='var(--ok)'}else{b.classList.add('no');fb.textContent='The answer is '+correct+'.';fb.style.color='var(--no)';c.querySelectorAll('.opt').forEach(function(x){if(String(x.textContent)===String(correct))x.classList.add('ok')})}};c.appendChild(b)})}
 
-var N1,N2,colData,nCols,step6;
 function rn(a,b){return Math.floor(Math.random()*(b-a+1))+a}
 
+function pool4(ans,lo,hi){
+  var s=new Set([ans]);var i=0;
+  while(s.size<4&&i<50){i++;var w=ans+rn(-12,12);if(w>=lo&&w<=hi&&w!==ans)s.add(w)}
+  return[...s].sort(function(){return Math.random()-.5});
+}
+
+function mkOpts(items,correct){
+  var c=document.getElementById('p6O');c.innerHTML='';
+  var fb=document.getElementById('p6F');fb.textContent='';
+  items.forEach(function(n){
+    var b=document.createElement('button');b.className='opt';b.textContent=n;
+    b.onclick=function(){
+      c.querySelectorAll('.opt').forEach(function(x){x.onclick=null});
+      if(n===correct){
+        b.classList.add('ok');
+        fb.innerHTML='<div style="background:#DCFCE7;border:2px solid #86EFAC;border-radius:12px;padding:12px;animation:pop .3s">🎉 Correct!</div>';
+        fb.style.color='var(--ok)';
+      } else {
+        b.classList.add('no');
+        fb.textContent='The answer is '+correct+'.';fb.style.color='var(--no)';
+        c.querySelectorAll('.opt').forEach(function(x){if(x.textContent===String(correct))x.classList.add('ok')});
+      }
+    };
+    c.appendChild(b);
+  });
+}
+
+/* ── Learn tab ── */
+var N1,N2,colData,nCols,step6;
 function gen6(){N1=rn(11,99);N2=rn(11,99)}
 function init6(){
   var t=N1+N2;var has3=t>=100;nCols=has3?3:2;
@@ -123,98 +129,74 @@ function init6(){
     colData[i]={d1:d1,d2:d2,ci:carry,sm:sm,dg:sm%10,co:Math.floor(sm/10)};
     carry=colData[i].co;
   }
-  step6=nCols-1; /* start from rightmost = ones */
+  step6=nCols-1;
 }
-
 function draw6(){
   var lbls=nCols===3?['H','T','O']:['T','O'];
   var cur=step6;var solved=new Set();for(var i=nCols-1;i>step6;i--)solved.add(i);
-  var cols=nCols;var cW=cols===3?'44px 56px 56px 56px':'44px 56px 56px';
+  var cW=nCols===3?'44px 56px 56px 56px':'44px 56px 56px';
   var tbl=document.getElementById('sumT');tbl.style.gridTemplateColumns=cW;tbl.innerHTML='';
-
-  /* header labels */
   tbl.innerHTML+='<div></div>';
-  for(var i=0;i<nCols;i++)tbl.innerHTML+='<div style="height:24px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:'+(i===cur?'var(--ac)':'var(--ink2)')+'">'+ lbls[i]+'</div>';
-
-  /* carry row */
+  for(var i=0;i<nCols;i++)tbl.innerHTML+='<div style="height:24px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:'+(i===cur?'var(--ac)':'var(--ink2)')+'">'+lbls[i]+'</div>';
   tbl.innerHTML+='<div></div>';
-  for(var i=0;i<nCols;i++){
-    var showC=i+1<nCols&&solved.has(i+1)&&colData[i+1]&&colData[i+1].co>0;
-    tbl.innerHTML+='<div style="height:22px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:16px;font-weight:900;color:#D97706">'+(showC?colData[i+1].co:'')+'</div>';
-  }
-
-  /* top number */
+  for(var i=0;i<nCols;i++){var showC=i+1<nCols&&solved.has(i+1)&&colData[i+1]&&colData[i+1].co>0;tbl.innerHTML+='<div style="height:22px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:16px;font-weight:900;color:#D97706">'+(showC?colData[i+1].co:'')+'</div>'}
   tbl.innerHTML+='<div></div>';
   for(var i=0;i<nCols;i++)tbl.innerHTML+='<div style="width:56px;height:52px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:36px;font-weight:900;color:var(--ink);border-radius:9px;'+(i===cur?'background:rgba(0,0,0,.04)':'')+'">'+colData[i].d1+'</div>';
-
-  /* bottom number with + sign */
   tbl.innerHTML+='<div style="width:44px;height:52px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:28px;font-weight:900;color:var(--ac)">+</div>';
   for(var i=0;i<nCols;i++)tbl.innerHTML+='<div style="width:56px;height:52px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:36px;font-weight:900;color:var(--ink);border-radius:9px;'+(i===cur?'background:rgba(0,0,0,.04)':'')+'">'+colData[i].d2+'</div>';
-
-  /* separator line */
   tbl.innerHTML+='<div></div><div style="grid-column:2/'+(2+nCols)+';height:3px;background:var(--ink);border-radius:2px;margin:2px 0"></div>';
   for(var x=1;x<nCols;x++)tbl.innerHTML+='<div style="display:none"></div>';
-
-  /* answer row */
   tbl.innerHTML+='<div></div>';
   for(var i=0;i<nCols;i++){
     if(solved.has(i))tbl.innerHTML+='<div style="width:56px;height:58px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:36px;font-weight:900;color:var(--ok);border-radius:12px;background:#DCFCE7;border:2px solid #86EFAC">'+colData[i].dg+'</div>';
     else if(i===cur)tbl.innerHTML+='<div style="width:56px;height:58px;display:flex;align-items:center;justify-content:center;border-radius:12px;border:2px solid var(--ac);background:rgba(0,0,0,.02)" id="curC"><input id="curI" type="number" min="0" max="9" placeholder="?" autocomplete="off" style="font-family:Grandstander,cursive;font-size:36px;font-weight:900;width:48px;height:48px;border:none;background:transparent;text-align:center;color:var(--ink);outline:none;-moz-appearance:textfield"></div>';
     else tbl.innerHTML+='<div style="width:56px;height:58px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:32px;color:#D1D5DB">_</div>';
   }
-
   var inp=document.getElementById('curI');
   if(inp){inp.oninput=function(){if(inp.value.length>1)inp.value=inp.value.slice(-1)};inp.onkeydown=function(e){if(e.key==='Enter')ck6()};inp.focus()}
 }
-
 function bi6(){
-  /* instruction: tells WHICH column and whether carry — but NOT the answer digit */
   var cur=step6;var cd=colData[cur];var lbls=nCols===3?['hundreds','tens','ones']:['tens','ones'];
   var col=lbls[cur];
   var h='<b>'+col.charAt(0).toUpperCase()+col.slice(1)+' column:</b> What is '+cd.d1+' + '+cd.d2;
   if(cd.ci>0)h+=' + <span style="color:#D97706;font-weight:900">'+cd.ci+' (carried)</span>';
   h+='?';
-  if(cd.sm>=10)h+='<br>💡 Hint: the answer is more than 9 — you\'ll need to carry a digit.';
+  if(cd.sm>=10)h+='<br>💡 The answer is more than 9 — carry a digit to the next column.';
   document.getElementById('inst').innerHTML=h;
 }
-
 function ck6(){
   var inp=document.getElementById('curI');if(!inp)return;
   var v=parseInt(inp.value);var fb=document.getElementById('cf');
   if(isNaN(v)||v<0||v>9){fb.textContent='Type a digit 0–9.';fb.style.color='var(--no)';inp.value='';inp.focus();return}
   var cor=colData[step6].dg;
   if(v===cor){
-    fb.textContent='✓';fb.style.color='var(--ok)';
-    var done=step6;
-    step6--;
-    setTimeout(function(){
-      fb.textContent='';
-      if(step6<0){
-        draw6();
-        document.getElementById('doneBox').style.display='block';
-        document.getElementById('doneBox').textContent='🎉 '+N1+' + '+N2+' = '+(N1+N2);
-        document.getElementById('inst').style.opacity='.3';
-        document.getElementById('goB').style.display='none';
-      } else {draw6();bi6()}
-    },450);
-  } else {
-    fb.textContent='Not quite — try again!';fb.style.color='var(--no)';inp.value='';inp.focus();
-  }
+    fb.textContent='✓';fb.style.color='var(--ok)';step6--;
+    setTimeout(function(){fb.textContent='';if(step6<0){draw6();document.getElementById('doneBox').style.display='block';document.getElementById('doneBox').textContent='🎉 '+N1+' + '+N2+' = '+(N1+N2);document.getElementById('inst').style.opacity='.3';document.getElementById('goB').style.display='none'}else{draw6();bi6()}},450);
+  } else {fb.textContent='Not quite — try again!';fb.style.color='var(--no)';inp.value='';inp.focus()}
 }
-
-function np6(){
-  gen6();init6();
-  document.getElementById('doneBox').style.display='none';
-  document.getElementById('inst').style.opacity='1';
-  document.getElementById('goB').style.display='inline-block';
-  document.getElementById('cf').textContent='';
-  draw6();bi6();
-}
+function np6(){gen6();init6();document.getElementById('doneBox').style.display='none';document.getElementById('inst').style.opacity='1';document.getElementById('goB').style.display='inline-block';document.getElementById('cf').textContent='';draw6();bi6()}
 np6();
-var p6a=0;
-function np6p(){var a=rn(11,99),b=rn(11,99);p6a=a+b;document.getElementById('p6Q').textContent=a+' + '+b+' = ?';document.getElementById('p6F').textContent='';mkOpts('p6O',pool4(p6a,20,198),p6a,'p6F')}
-np6p();
 
+/* ── Practice tab: calculation + word problems ── */
+var ADD_WORDS=[
+  function(a,b){return{tag:'Word problem',q:'Riya collected <b>'+a+'</b> stickers. Her friend gave her <b>'+b+'</b> more. How many stickers does she have now?',ans:a+b}},
+  function(a,b){return{tag:'Word problem',q:'A train had <b>'+a+'</b> passengers. At the next stop, <b>'+b+'</b> more boarded. How many passengers in total?',ans:a+b}},
+  function(a,b){return{tag:'Word problem',q:'Arjun read <b>'+a+'</b> pages on Monday and <b>'+b+'</b> pages on Tuesday. How many pages did he read altogether?',ans:a+b}},
+  function(a,b){return{tag:'Word problem',q:'A shop sold <b>'+a+'</b> bananas in the morning and <b>'+b+'</b> in the evening. How many bananas were sold in all?',ans:a+b}},
+  function(a,b){return{tag:'Word problem',q:'Class A has <b>'+a+'</b> students and Class B has <b>'+b+'</b> students. What is the total number of students?',ans:a+b}},
+  function(a,b){return{tag:'Word problem',q:'Meera scored <b>'+a+'</b> runs in the first match and <b>'+b+'</b> runs in the second match. What is her total score?',ans:a+b}},
+  function(a,b){return{tag:'Calculation',q:'<span style="font-family:Grandstander,cursive;font-size:26px;font-weight:900">'+a+' + '+b+' = ?</span>',ans:a+b}},
+];
+
+function np6p(){
+  var a=rn(11,99),b=rn(11,99);
+  var gen=ADD_WORDS[Math.floor(Math.random()*ADD_WORDS.length)];
+  var q=gen(a,b);
+  var qbox=document.getElementById('p6Q');
+  qbox.innerHTML='<div class="qtag">'+q.tag+'</div><div>'+q.q+'</div>';
+  mkOpts(pool4(q.ans,20,198),q.ans);
+}
+np6p();
 </script>
 </body>
 </html>
