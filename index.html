@@ -42,6 +42,18 @@ html,body{width:100%;min-height:100vh;font-family:'Poppins',sans-serif;backgroun
 .big{font-family:'Grandstander',cursive;font-weight:900;line-height:1;text-align:center}
 .qbox{background:rgba(0,0,0,.02);border-radius:14px;padding:14px 16px;border:1.5px solid rgba(0,0,0,.06);margin-bottom:14px;font-size:15px;font-weight:600;line-height:1.7;color:var(--ink)}
 .qtag{display:inline-block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;background:var(--ac);color:#fff;border-radius:20px;padding:2px 10px;margin-bottom:8px}
+/* column grid */
+.col-grid{display:inline-grid;gap:0;align-items:center}
+.col-cell{width:56px;height:52px;display:flex;align-items:center;justify-content:center;font-family:'Grandstander',cursive;font-size:36px;font-weight:900}
+.col-sign{width:44px;height:52px;display:flex;align-items:center;justify-content:center;font-family:'Grandstander',cursive;font-size:28px;font-weight:900;color:var(--ac)}
+.col-hdr{height:26px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+.col-carry{height:24px;display:flex;align-items:center;justify-content:center;font-family:'Grandstander',cursive;font-size:15px;font-weight:900;color:#D97706}
+.col-ans{width:56px;height:58px;display:flex;align-items:center;justify-content:center;font-family:'Grandstander',cursive;font-size:36px;font-weight:900}
+.col-ans-ok{background:#DCFCE7;border:2px solid #86EFAC;border-radius:12px;color:var(--ok)}
+.col-ans-blank{color:#D1D5DB}
+.col-ans-cur{border:2px solid var(--ac);border-radius:12px;background:rgba(0,0,0,.02)}
+.col-inp{font-family:'Grandstander',cursive;font-size:36px;font-weight:900;width:48px;height:48px;border:none;background:transparent;text-align:center;color:var(--ink);outline:none;-moz-appearance:textfield}
+.col-line{height:3px;background:var(--ink);border-radius:2px;margin:2px 0}
 </style>
 </head>
 <body>
@@ -57,17 +69,17 @@ html,body{width:100%;min-height:100vh;font-family:'Poppins',sans-serif;backgroun
 
 <div class="pnl on" id="p-learn">
   <div class="card"><div class="cb"></div>
-    <div class="ct">Column addition — one digit at a time</div>
-    <div class="cs">Type the digit for the highlighted column. Press Enter or Check. Work right to left.</div>
+    <div class="ct">Column method addition</div>
+    <div class="cs">Type the digit for each highlighted column. Work right to left — Ones first, then Tens, then Hundreds. Carry when the sum is more than 9.</div>
     <div style="display:flex;justify-content:center;margin-bottom:16px">
-      <div id="sumT" style="display:inline-grid;gap:0;align-items:center"></div>
+      <div id="colGrid" class="col-grid"></div>
     </div>
-    <div style="background:rgba(0,0,0,.02);border-radius:14px;padding:14px;border:1.5px solid rgba(0,0,0,.06);margin-bottom:12px;font-size:13px;font-weight:600;color:var(--ink);line-height:1.8;min-height:50px" id="inst">Press "New problem" to start.</div>
+    <div style="background:rgba(0,0,0,.02);border-radius:14px;padding:14px;border:1.5px solid rgba(0,0,0,.06);margin-bottom:12px;font-size:13px;font-weight:600;color:var(--ink);line-height:1.8;min-height:50px" id="inst"></div>
     <div class="fb" id="cf"></div>
-    <div id="doneBox" style="display:none;background:#DCFCE7;border-radius:14px;padding:14px;text-align:center;font-family:Grandstander,cursive;font-size:22px;font-weight:900;color:var(--ok);margin-bottom:10px"></div>
+    <div id="doneBox" style="display:none;background:#DCFCE7;border-radius:14px;padding:14px;text-align:center;font-family:'Grandstander',cursive;font-size:22px;font-weight:900;color:var(--ok);margin-bottom:10px"></div>
     <div class="row">
-      <button class="btn btn-p" id="goB" onclick="ck6()" style="display:none">Check ✓</button>
-      <button class="btn btn-g" onclick="np6()">New problem ↻</button>
+      <button class="btn btn-p" id="goB" onclick="ckAdd()" style="display:none">Check ✓</button>
+      <button class="btn btn-g" onclick="npAdd()">New problem ↻</button>
     </div>
   </div>
 </div>
@@ -76,10 +88,10 @@ html,body{width:100%;min-height:100vh;font-family:'Poppins',sans-serif;backgroun
   <div class="card"><div class="cb"></div>
     <div class="ct">Solve it</div>
     <div class="cs">Some questions are calculations, some are word problems. Pick the right answer.</div>
-    <div class="qbox" id="p6Q"></div>
-    <div class="opts" id="p6O"></div>
-    <div class="fb" id="p6F"></div>
-    <button class="nbtn" onclick="np6p()">Next →</button>
+    <div class="qbox" id="pQ"></div>
+    <div class="opts" id="pO"></div>
+    <div class="fb" id="pF"></div>
+    <button class="nbtn" onclick="npPrac()">Next →</button>
   </div>
 </div>
 
@@ -89,95 +101,161 @@ function sw(n){document.querySelectorAll('.tab').forEach(function(t){t.classList
 document.getElementById('p-practice').style.display='none';
 
 function rn(a,b){return Math.floor(Math.random()*(b-a+1))+a}
-
-function pool4(ans,lo,hi){
-  var s=new Set([ans]);var i=0;
-  while(s.size<4&&i<50){i++;var w=ans+rn(-12,12);if(w>=lo&&w<=hi&&w!==ans)s.add(w)}
-  return[...s].sort(function(){return Math.random()-.5});
-}
+function pool4(ans,lo,hi){var s=new Set([ans]);var i=0;while(s.size<4&&i<60){i++;var w=ans+rn(-20,20);if(w>=lo&&w<=hi&&w!==ans)s.add(w)}return[...s].sort(function(){return Math.random()-.5})}
 
 function mkOpts(items,correct){
-  var c=document.getElementById('p6O');c.innerHTML='';
-  var fb=document.getElementById('p6F');fb.textContent='';
+  var c=document.getElementById('pO');c.innerHTML='';
+  var fb=document.getElementById('pF');fb.textContent='';
   items.forEach(function(n){
     var b=document.createElement('button');b.className='opt';b.textContent=n;
     b.onclick=function(){
       c.querySelectorAll('.opt').forEach(function(x){x.onclick=null});
-      if(n===correct){
-        b.classList.add('ok');
-        fb.innerHTML='<div style="background:#DCFCE7;border:2px solid #86EFAC;border-radius:12px;padding:12px;animation:pop .3s">🎉 Correct!</div>';
-        fb.style.color='var(--ok)';
-      } else {
-        b.classList.add('no');
-        fb.textContent='The answer is '+correct+'.';fb.style.color='var(--no)';
-        c.querySelectorAll('.opt').forEach(function(x){if(x.textContent===String(correct))x.classList.add('ok')});
-      }
+      if(n===correct){b.classList.add('ok');fb.innerHTML='<div style="background:#DCFCE7;border:2px solid #86EFAC;border-radius:12px;padding:12px;animation:pop .3s">🎉 Correct!</div>';fb.style.color='var(--ok)'}
+      else{b.classList.add('no');fb.textContent='The answer is '+correct+'.';fb.style.color='var(--no)';c.querySelectorAll('.opt').forEach(function(x){if(x.textContent===String(correct))x.classList.add('ok')})}
     };
     c.appendChild(b);
   });
 }
 
-/* ── Learn tab ── */
-var N1,N2,colData,nCols,step6;
-function gen6(){N1=rn(11,99);N2=rn(11,99)}
-function init6(){
-  var t=N1+N2;var has3=t>=100;nCols=has3?3:2;
-  function gd(n,ci){if(!has3)return ci===0?Math.floor(n/10):n%10;if(ci===2)return n%10;if(ci===1)return Math.floor(n/10);return 0}
-  colData=[];var carry=0;
-  for(var i=nCols-1;i>=0;i--){
-    var d1=gd(N1,i),d2=gd(N2,i),sm=d1+d2+carry;
-    colData[i]={d1:d1,d2:d2,ci:carry,sm:sm,dg:sm%10,co:Math.floor(sm/10)};
-    carry=colData[i].co;
+/* ── COLUMN ENGINE (shared) ─────────────────────────────────────────────
+   Always renders exactly 3 digit columns: H, T, O.
+   If the answer needs a 4th digit (carry out of H), renders Th as well.
+   sign: '+' or '−'
+   d1arr, d2arr: arrays of digits [H, T, O] (or [Th, H, T, O] if 4 cols)
+   colDataArr: [{d1,d2,ci,sm,dg,co}] one entry per column
+   nC: number of columns (3 or 4)
+   stepVal: current column index being answered (right = nC-1)
+   solvedSet: Set of solved column indices
+   gridId: DOM id of the grid container
+   inputId: id for the input element
+   accentColor: CSS var string for active column highlight
+──────────────────────────────────────────────────────────────────────── */
+function renderColGrid(opts){
+  var g=document.getElementById(opts.gridId);
+  var nC=opts.nC,cur=opts.cur,solved=opts.solved,cd=opts.colData;
+  var lbls=nC===4?['Th','H','T','O']:['H','T','O'];
+  /* grid columns: sign-col (44px) + nC digit-cols (56px each) */
+  g.style.gridTemplateColumns='44px '+Array(nC).fill('56px').join(' ');
+  g.innerHTML='';
+
+  /* ── ROW 1: column headers ── */
+  g.innerHTML+='<div></div>'; /* sign col spacer */
+  for(var i=0;i<nC;i++){
+    var active=i===cur;
+    g.innerHTML+='<div class="col-hdr" style="color:'+(active?'var(--ac)':'var(--ink2)')+'">'+lbls[i]+'</div>';
   }
-  step6=nCols-1;
-}
-function draw6(){
-  var lbls=nCols===3?['H','T','O']:['T','O'];
-  var cur=step6;var solved=new Set();for(var i=nCols-1;i>step6;i--)solved.add(i);
-  var cW=nCols===3?'44px 56px 56px 56px':'44px 56px 56px';
-  var tbl=document.getElementById('sumT');tbl.style.gridTemplateColumns=cW;tbl.innerHTML='';
-  tbl.innerHTML+='<div></div>';
-  for(var i=0;i<nCols;i++)tbl.innerHTML+='<div style="height:24px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:'+(i===cur?'var(--ac)':'var(--ink2)')+'">'+lbls[i]+'</div>';
-  tbl.innerHTML+='<div></div>';
-  for(var i=0;i<nCols;i++){var showC=i+1<nCols&&solved.has(i+1)&&colData[i+1]&&colData[i+1].co>0;tbl.innerHTML+='<div style="height:22px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:16px;font-weight:900;color:#D97706">'+(showC?colData[i+1].co:'')+'</div>'}
-  tbl.innerHTML+='<div></div>';
-  for(var i=0;i<nCols;i++)tbl.innerHTML+='<div style="width:56px;height:52px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:36px;font-weight:900;color:var(--ink);border-radius:9px;'+(i===cur?'background:rgba(0,0,0,.04)':'')+'">'+colData[i].d1+'</div>';
-  tbl.innerHTML+='<div style="width:44px;height:52px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:28px;font-weight:900;color:var(--ac)">+</div>';
-  for(var i=0;i<nCols;i++)tbl.innerHTML+='<div style="width:56px;height:52px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:36px;font-weight:900;color:var(--ink);border-radius:9px;'+(i===cur?'background:rgba(0,0,0,.04)':'')+'">'+colData[i].d2+'</div>';
-  tbl.innerHTML+='<div></div><div style="grid-column:2/'+(2+nCols)+';height:3px;background:var(--ink);border-radius:2px;margin:2px 0"></div>';
-  for(var x=1;x<nCols;x++)tbl.innerHTML+='<div style="display:none"></div>';
-  tbl.innerHTML+='<div></div>';
-  for(var i=0;i<nCols;i++){
-    if(solved.has(i))tbl.innerHTML+='<div style="width:56px;height:58px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:36px;font-weight:900;color:var(--ok);border-radius:12px;background:#DCFCE7;border:2px solid #86EFAC">'+colData[i].dg+'</div>';
-    else if(i===cur)tbl.innerHTML+='<div style="width:56px;height:58px;display:flex;align-items:center;justify-content:center;border-radius:12px;border:2px solid var(--ac);background:rgba(0,0,0,.02)" id="curC"><input id="curI" type="number" min="0" max="9" placeholder="?" autocomplete="off" style="font-family:Grandstander,cursive;font-size:36px;font-weight:900;width:48px;height:48px;border:none;background:transparent;text-align:center;color:var(--ink);outline:none;-moz-appearance:textfield"></div>';
-    else tbl.innerHTML+='<div style="width:56px;height:58px;display:flex;align-items:center;justify-content:center;font-family:Grandstander,cursive;font-size:32px;color:#D1D5DB">_</div>';
+
+  /* ── ROW 2: carry / borrow annotation ── */
+  g.innerHTML+='<div></div>';
+  for(var i=0;i<nC;i++){
+    var content='';
+    if(opts.isAdd){
+      /* show carry above the column to the left of where it was generated */
+      var rightCol=i+1;
+      if(rightCol<nC&&solved.has(rightCol)&&cd[rightCol]&&cd[rightCol].co>0)
+        content='<span style="font-size:13px">'+cd[rightCol].co+'</span>';
+    } else {
+      /* subtraction: show strikethrough + reduced digit when borrowed */
+      if(cd[i]&&cd[i].brw&&solved.has(i+1))
+        content='<span style="font-size:10px;color:#9CA3AF;text-decoration:line-through;line-height:1">'+cd[i].d1+'</span>'
+               +'<span style="font-family:Grandstander,cursive;font-size:14px;font-weight:900;color:var(--no);line-height:1">'+(cd[i].d1-1)+'</span>';
+    }
+    g.innerHTML+='<div class="col-carry" style="flex-direction:column">'+content+'</div>';
   }
-  var inp=document.getElementById('curI');
-  if(inp){inp.oninput=function(){if(inp.value.length>1)inp.value=inp.value.slice(-1)};inp.onkeydown=function(e){if(e.key==='Enter')ck6()};inp.focus()}
+
+  /* ── ROW 3: top number ── */
+  g.innerHTML+='<div></div>';
+  for(var i=0;i<nC;i++){
+    var d=cd[i].d1;
+    var dim=d===0&&i===0; /* lead zero: dim it */
+    var hi=i===cur?'background:rgba(0,0,0,.04);border-radius:9px':'';
+    /* for subtraction: if we already solved right col and it needed borrow, strikethrough this digit */
+    var inner=String(d);
+    if(!opts.isAdd&&cd[i].brw&&solved.has(i+1))
+      inner='<s style="color:#9CA3AF;font-size:28px">'+d+'</s>';
+    g.innerHTML+='<div class="col-cell" style="color:'+(dim?'#D1D5DB':'var(--ink)')+';'+hi+'">'+inner+'</div>';
+  }
+
+  /* ── ROW 4: operator sign + bottom number ── */
+  g.innerHTML+='<div class="col-sign">'+opts.sign+'</div>';
+  for(var i=0;i<nC;i++){
+    var d=cd[i].d2;
+    var dim=d===0&&i===0;
+    var hi=i===cur?'background:rgba(0,0,0,.04);border-radius:9px':'';
+    g.innerHTML+='<div class="col-cell" style="color:'+(dim?'#D1D5DB':'var(--ink)')+';'+hi+'">'+d+'</div>';
+  }
+
+  /* ── DIVIDER LINE ── spans from col 2 to end */
+  g.innerHTML+='<div></div><div class="col-line" style="grid-column:2/'+(2+nC)+'"></div>';
+  for(var x=1;x<nC;x++)g.innerHTML+='<div style="display:none"></div>';
+
+  /* ── ROW 5: answer ── */
+  g.innerHTML+='<div></div>';
+  for(var i=0;i<nC;i++){
+    if(solved.has(i)){
+      g.innerHTML+='<div class="col-ans col-ans-ok">'+cd[i].dg+'</div>';
+    } else if(i===cur){
+      g.innerHTML+='<div class="col-ans col-ans-cur" id="'+opts.inputId+'Wrap"><input id="'+opts.inputId+'" type="number" min="0" max="9" placeholder="?" autocomplete="off" class="col-inp"></div>';
+    } else {
+      g.innerHTML+='<div class="col-ans col-ans-blank">_</div>';
+    }
+  }
+
+  var inp=document.getElementById(opts.inputId);
+  if(inp){
+    inp.oninput=function(){if(inp.value.length>1)inp.value=inp.value.slice(-1)};
+    inp.onkeydown=function(e){if(e.key==='Enter')opts.checkFn()};
+    inp.focus();
+  }
 }
-function bi6(){
-  var cur=step6;var cd=colData[cur];var lbls=nCols===3?['hundreds','tens','ones']:['tens','ones'];
-  var col=lbls[cur];
-  var h='<b>'+col.charAt(0).toUpperCase()+col.slice(1)+' column:</b> What is '+cd.d1+' + '+cd.d2;
-  if(cd.ci>0)h+=' + <span style="color:#D97706;font-weight:900">'+cd.ci+' (carried)</span>';
+
+/* ── ADDITION LOGIC ── */
+var AN1,AN2,aColData,aNcols,aStep;
+
+function genAdd(){AN1=rn(100,699);AN2=rn(100,299)}
+
+function initAdd(){
+  var h1=Math.floor(AN1/100),t1=Math.floor((AN1%100)/10),o1=AN1%10;
+  var h2=Math.floor(AN2/100),t2=Math.floor((AN2%100)/10),o2=AN2%10;
+  var d1=[h1,t1,o1],d2=[h2,t2,o2];
+  aColData=[];var carry=0;
+  for(var i=2;i>=0;i--){var sm=d1[i]+d2[i]+carry;aColData[i]={d1:d1[i],d2:d2[i],ci:carry,sm:sm,dg:sm%10,co:Math.floor(sm/10)};carry=aColData[i].co}
+  aNcols=3;
+  if(carry>0){aNcols=4;aColData.unshift({d1:0,d2:0,ci:carry,sm:carry,dg:carry,co:0})}
+  aStep=aNcols-1;
+}
+
+function drawAdd(){
+  var solved=new Set();for(var i=aNcols-1;i>aStep;i--)solved.add(i);
+  renderColGrid({gridId:'colGrid',inputId:'aInp',nC:aNcols,cur:aStep,solved:solved,colData:aColData,sign:'+',isAdd:true,checkFn:ckAdd});
+}
+
+function biAdd(){
+  var lbls=aNcols===4?['thousands','hundreds','tens','ones']:['hundreds','tens','ones'];
+  var col=aColData[aStep],name=lbls[aStep];
+  var h='<b>'+name.charAt(0).toUpperCase()+name.slice(1)+' column:</b> What is '+col.d1+' + '+col.d2;
+  if(col.ci>0)h+=' + <span style="color:#D97706;font-weight:900">'+col.ci+' (carried)</span>';
   h+='?';
-  if(cd.sm>=10)h+='<br>💡 The answer is more than 9 — carry a digit to the next column.';
+  if(col.sm>=10)h+='<br>💡 Sum is '+col.sm+' — write <b>'+col.dg+'</b> and carry <b>'+col.co+'</b>.';
   document.getElementById('inst').innerHTML=h;
 }
-function ck6(){
-  var inp=document.getElementById('curI');if(!inp)return;
+
+function ckAdd(){
+  var inp=document.getElementById('aInp');if(!inp)return;
   var v=parseInt(inp.value);var fb=document.getElementById('cf');
   if(isNaN(v)||v<0||v>9){fb.textContent='Type a digit 0–9.';fb.style.color='var(--no)';inp.value='';inp.focus();return}
-  var cor=colData[step6].dg;
-  if(v===cor){
-    fb.textContent='✓';fb.style.color='var(--ok)';step6--;
-    setTimeout(function(){fb.textContent='';if(step6<0){draw6();document.getElementById('doneBox').style.display='block';document.getElementById('doneBox').textContent='🎉 '+N1+' + '+N2+' = '+(N1+N2);document.getElementById('inst').style.opacity='.3';document.getElementById('goB').style.display='none'}else{draw6();bi6()}},450);
+  if(v===aColData[aStep].dg){
+    fb.textContent='✓';fb.style.color='var(--ok)';aStep--;
+    setTimeout(function(){fb.textContent='';
+      if(aStep<0){drawAdd();document.getElementById('doneBox').style.display='block';document.getElementById('doneBox').textContent='🎉 '+AN1+' + '+AN2+' = '+(AN1+AN2);document.getElementById('inst').style.opacity='.3';document.getElementById('goB').style.display='none'}
+      else{drawAdd();biAdd()}},450);
   } else {fb.textContent='Not quite — try again!';fb.style.color='var(--no)';inp.value='';inp.focus()}
 }
-function np6(){gen6();init6();document.getElementById('doneBox').style.display='none';document.getElementById('inst').style.opacity='1';document.getElementById('goB').style.display='inline-block';document.getElementById('cf').textContent='';draw6();bi6()}
-np6();
 
-/* ── Practice tab: calculation + word problems ── */
+function npAdd(){genAdd();initAdd();document.getElementById('doneBox').style.display='none';document.getElementById('inst').style.opacity='1';document.getElementById('goB').style.display='inline-block';document.getElementById('cf').textContent='';drawAdd();biAdd()}
+npAdd();
+
+/* ── PRACTICE ── */
 var ADD_WORDS=[
   function(a,b){return{tag:'Word problem',q:'Riya collected <b>'+a+'</b> stickers. Her friend gave her <b>'+b+'</b> more. How many stickers does she have now?',ans:a+b}},
   function(a,b){return{tag:'Word problem',q:'A train had <b>'+a+'</b> passengers. At the next stop, <b>'+b+'</b> more boarded. How many passengers in total?',ans:a+b}},
@@ -188,15 +266,14 @@ var ADD_WORDS=[
   function(a,b){return{tag:'Calculation',q:'<span style="font-family:Grandstander,cursive;font-size:26px;font-weight:900">'+a+' + '+b+' = ?</span>',ans:a+b}},
 ];
 
-function np6p(){
-  var a=rn(11,99),b=rn(11,99);
+function npPrac(){
+  var a=rn(100,699),b=rn(100,299);
   var gen=ADD_WORDS[Math.floor(Math.random()*ADD_WORDS.length)];
   var q=gen(a,b);
-  var qbox=document.getElementById('p6Q');
-  qbox.innerHTML='<div class="qtag">'+q.tag+'</div><div>'+q.q+'</div>';
-  mkOpts(pool4(q.ans,20,198),q.ans);
+  document.getElementById('pQ').innerHTML='<div class="qtag">'+q.tag+'</div><div>'+q.q+'</div>';
+  mkOpts(pool4(q.ans,200,998),q.ans);
 }
-np6p();
+npPrac();
 </script>
 </body>
 </html>
